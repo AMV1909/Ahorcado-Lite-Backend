@@ -44,7 +44,7 @@ export const gameSocket = (io) => {
                 })
                 .catch((err) => console.log(err));
 
-            socket.emit("game", gameData);
+            io.emit("game", gameData);
         });
 
         socket.on("resetGame", async () => {
@@ -73,7 +73,7 @@ export const gameSocket = (io) => {
                 .then((data) => (gameData = data))
                 .catch((err) => console.log(err));
 
-            socket.emit("resetGame", gameData);
+            io.emit("resetGame", gameData);
         });
 
         socket.on("letterSelected", async (letter) => {
@@ -100,7 +100,7 @@ export const gameSocket = (io) => {
                 .then((data) => (gameData = data))
                 .catch((err) => console.log(err));
 
-            socket.emit("letterSelected", gameData);
+            io.emit("letterSelected", gameData);
         });
     });
 };
