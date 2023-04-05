@@ -48,8 +48,6 @@ export const gameSocket = (io) => {
         });
 
         socket.on("resetGame", async () => {
-            console.log(gameData);
-
             let word = generateWord();
 
             while (word.length > 10) {
