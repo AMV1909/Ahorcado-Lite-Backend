@@ -4,22 +4,22 @@ import { removeTilde } from "../utils/removeTilde.js";
 
 export const gameSocket = (io) => {
     io.on("connection", (socket) => {
-        let gameData = {
-            _id: 1,
-            word: "",
-            good: [],
-            bad: 0,
-            availableLetters: [],
-            win: false,
-            lose: false,
-        };
+        // let gameData = {
+        //     _id: 1,
+        //     word: "",
+        //     good: [],
+        //     bad: 0,
+        //     availableLetters: [],
+        //     win: false,
+        //     lose: false,
+        // };
 
         socket.on("game", async () => {
             await game
                 .findOne({ _id: 1 })
                 .then(async (data) => {
                     if (data) {
-                        gameData = data;
+                        io.emit("game", data);
                     } else {
                         let word = generateWord();
 
@@ -38,13 +38,11 @@ export const gameSocket = (io) => {
                                 win: false,
                                 lose: false,
                             })
-                            .then((data) => (gameData = data))
+                            .then((data) => io.emit("game", data))
                             .catch((err) => console.log(err));
                     }
                 })
                 .catch((err) => console.log(err));
-
-            io.emit("game", gameData);
         });
 
         socket.on("resetGame", async () => {
@@ -70,37 +68,40 @@ export const gameSocket = (io) => {
                     },
                     { new: true }
                 )
-                .then((data) => (gameData = data))
+                .then((data) => io.emit("resetGame", data))
                 .catch((err) => console.log(err));
-
-            io.emit("resetGame", gameData);
         });
 
         socket.on("letterSelected", async (letter) => {
-            if (gameData.word.includes(letter)) {
-                gameData.good.push(letter);
-            } else {
-                gameData.bad++;
-            }
-
-            gameData.availableLetters = gameData.availableLetters.filter(
-                (l) => l !== letter
-            );
-
-            if (gameData.bad == 9) {
-                gameData.lose = true;
-            }
-
-            if (gameData.good.length == gameData.word.length) {
-                gameData.win = true;
-            }
-
             await game
-                .findOneAndUpdate({ _id: 1 }, gameData, { new: true })
-                .then((data) => (gameData = data))
-                .catch((err) => console.log(err));
+                .findOne({ _id: 1 })
+                .then(async (data) => {
+                    if (data.word.includes(letter)) {
+                        data.good.push(letter);
+                    } else {
+                        data.bad++;
+                    }
 
-            io.emit("letterSelected", gameData);
+                    data.availableLetters = data.availableLetters.filter(
+                        (l) => l !== letter
+                    );
+
+                    if (data.bad == 9) {
+                        data.lose = true;
+                    }
+
+                    if (data.good.length == data.word.length) {
+                        data.win = true;
+                    }
+
+                    console.log(data);
+
+                    await game
+                        .updateOne({ _id: 1 }, data)
+                        .then(() => io.emit("letterSelected", data))
+                        .catch((err) => console.log(err));
+                })
+                .catch((err) => console.log(err));
         });
     });
 };
