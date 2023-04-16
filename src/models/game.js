@@ -9,12 +9,46 @@ export const game = model(
                 required: true,
                 default: 1,
             },
-            word: String,
-            good: [String],
-            bad: Number,
-            availableLetters: [String],
-            win: Boolean,
-            lose: Boolean,
+            players: {
+                type: Array,
+                required: true,
+                default: [],
+            },
+            turn: {
+                type: Number,
+                required: true,
+                default: 0,
+            },
+            word: {
+                type: String,
+                required: true,
+                default: "",
+            },
+            good: {
+                type: Array,
+                required: true,
+                default: [],
+            },
+            bad: {
+                type: Number,
+                required: true,
+                default: 0,
+            },
+            availableLetters: {
+                type: Array,
+                required: true,
+                default: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split(""),
+            },
+            win: {
+                type: Boolean,
+                required: true,
+                default: false,
+            },
+            lose: {
+                type: Boolean,
+                required: true,
+                default: false,
+            },
         },
         {
             timestamps: false,
