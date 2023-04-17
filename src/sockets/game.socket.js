@@ -9,21 +9,10 @@ export const gameSocket = (io) => {
                 .findOne({ _id: 1 })
                 .then(async (data) => {
                     if (data) {
-                        let playerExists = false;
-                        data.players.forEach((p) => {
-                            if (p.id === socket.id) {
-                                playerExists = true;
-                            }
-                        });
-
-                        if (!playerExists) {
-                            data.players.push({
-                                id: socket.id,
-                                name: player,
-                            });
+                        //If the player is not in the game, add it as an object with the socket id and the player
+                        if (!data.players.some((p) => p.id == socket.id)) {
+                            data.players.push({ id: socket.id, name: player });
                         }
-
-                        data.players = data.players.filter((p) => p.id);
 
                         await game
                             .updateOne({ _id: 1 }, data)
@@ -116,16 +105,10 @@ export const gameSocket = (io) => {
                             (player) => player.id != socket.id
                         );
 
-                        if (data.players.length == 0) {
-                            await game
-                                .deleteOne({ _id: 1 })
-                                .catch((err) => console.log(err));
-                        } else {
-                            await game
-                                .updateOne({ _id: 1 }, data)
-                                .then(() => io.emit("game", data))
-                                .catch((err) => console.log(err));
-                        }
+                        await game
+                            .updateOne({ _id: 1 }, data)
+                            .then(() => io.emit("game", data))
+                            .catch((err) => console.log(err));
                     }
                 })
                 .catch((err) => console.log(err));
