@@ -65,7 +65,9 @@ export const gameSocket = (io) => {
                 .then(async (data) => {
                     data.turn = (data.turn + 1) % data.players.length;
 
-                    if (removeTilde(data.word).includes(letter)) {
+                    let word = data.word;
+
+                    if (removeTilde(word).includes(letter)) {
                         data.good.push(letter);
                     } else {
                         data.bad++;
