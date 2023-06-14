@@ -8,15 +8,7 @@ import "./database/db.js";
 
 // Create the server
 const server = createServer(app);
-const io = new Server(server, { cors: { origin: "*", methods: "*" } });
-
-// Middlewares
-server.prependListener("request", (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "*");
-    res.setHeader("Access-Control-Allow-Headers", "*");
-    res.setHeader("Access-Control-Allow-Credentials", true);
-});
+const io = new Server(server, { cors: { origin: "*" } });
 
 // Sockets
 gameSocket(io);

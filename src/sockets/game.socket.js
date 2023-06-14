@@ -28,7 +28,7 @@ export const gameSocket = (io) => {
                         await game
                             .create({
                                 players: [socket.id],
-                                word: toUpperCase(),
+                                word: removeTilde(word).toUpperCase(),
                             })
                             .then((data) => io.emit("game", data))
                             .catch((err) => console.log(err));
@@ -48,7 +48,7 @@ export const gameSocket = (io) => {
                 .findOneAndReplace(
                     { _id: 1 },
                     {
-                        word: toUpperCase(),
+                        word: removeTilde(word).toUpperCase(),
                     },
                     { new: true }
                 )
@@ -65,7 +65,7 @@ export const gameSocket = (io) => {
                 .then(async (data) => {
                     data.turn = (data.turn + 1) % data.players.length;
 
-                    if (removeTilde(data.word).includes(letter)) {
+                    if (data.word.includes(letter)) {
                         data.good.push(letter);
                     } else {
                         data.bad++;
