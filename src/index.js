@@ -8,7 +8,7 @@ import "./database/db.js";
 
 // Create the server
 const server = createServer(app);
-const io = new Server(server, { cors: { origin: "http://ahorcado.eastus.cloudapp.azure.com" } });
+const io = new Server(server, { cors: { origin: "*", methods: "*" } });
 
 // Sockets
 gameSocket(io);
